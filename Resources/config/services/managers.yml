@@ -1,0 +1,16 @@
+parameters:
+
+    ecentria.api.domain_message.class:             Ecentria\Libraries\EcentriaRestBundle\Services\MessageManager
+    ecentria.api.domain_message_consumer.class:    Ecentria\Libraries\EcentriaRestBundle\Consumer\MessageConsumer
+
+services:
+    ecentria.api.domain_message.manager:
+        class: %ecentria.api.domain_message.class%
+        arguments:
+            - @event_dispatcher
+        calls:
+            - [setContainer, [@service_container]]
+    ecentria.api.domain_message_consumer.service:
+        class: %ecentria.api.domain_message_consumer.class%
+        arguments:
+            - @ecentria.api.domain_message.manager

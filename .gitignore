@@ -1,0 +1,8 @@
+/phpunit.xml*~
+/phpunit.phar
+/phpunit.phar/*
+/vendor/
+/.idea
+composer.lock
+/Tests/Controller/App/cache/*
+/Tests/Controller/App/logs/*
