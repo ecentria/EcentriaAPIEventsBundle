@@ -1,9 +1,7 @@
-Ecentria REST Bundle
+Ecentria API Events Bundle
 =========================
 
-Goal of this bundle is to simplify process of creating APIs with Symfony. We use already well-coded libraries, combine
-them together to simplify process and not to re-invent the wheel. We've chose REST and HATEOS to have unified standards
-of API requests and responses.
+Generic consumer and standard event message model meanth to pull in a domain event message from rabbitmq and repeat it as a symfony event to all listening services
 
 Documentation
 -------------
@@ -25,7 +23,7 @@ This bundle is under the MIT license. See the complete license in the bundle:
 Reporting an issue or a feature request
 ---------------------------------------
 
-Issues and feature requests are tracked in the [Github issue tracker](https://github.com/ecentria/EcentriaRestBundle/issues).
+Issues and feature requests are tracked in the [Github issue tracker](https://github.com/ecentria/EcentriaAPIEventsBundle/issues).
 
 For contributors
 ----------------
