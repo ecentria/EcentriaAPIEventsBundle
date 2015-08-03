@@ -16,15 +16,11 @@
         {
             "type": "vcs",
             "url": "https://github.com/ecentria/EcentriaAPIEventsBundle"
-        },
-        {
-            "type": "vcs",
-            "url": "https://github.com/ecentria/EcentriaRestBundle"
         }        
     ],
     "require": {
         "php": ">=5.3.2",
-        "symfony/symfony": "~2.5",
+         "symfony/event-dispatcher": "2.5.*",
         "oldsound/rabbitmq-bundle": "1.*",
         "ecentria/ecentria-rest-bundle": "@dev"
     },
