@@ -10,11 +10,9 @@
 
 namespace Ecentria\Libraries\EcentriaAPIEventsBundle\Services;
 
-use Symfony\Component\DependencyInjection\ContainerAwareInterface,
-    \Symfony\Component\DependencyInjection\ContainerInterface,
-    Ecentria\Libraries\EcentriaAPIEventsBundle\Model\Message,
-    Symfony\Component\EventDispatcher\EventDispatcherInterface,
-    Ecentria\Libraries\EcentriaAPIEventsBundle\Event\MessageEvent;
+use Ecentria\Libraries\EcentriaAPIEventsBundle\Model\Message;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Ecentria\Libraries\EcentriaAPIEventsBundle\Event\MessageEvent;
 
 /**
  * Message Manager Service
@@ -25,14 +23,14 @@ use Symfony\Component\DependencyInjection\ContainerAwareInterface,
  *
  * @author Justin Shanks <justin.shanks@opticsplanet.com>
  */
-class MessageManager implements ContainerAwareInterface {
-
+class MessageDispatcher
+{
     /**
-     * DI Container object
+     * Configuration
      *
-     * @var \Symfony\Component\DependencyInjection\Container
+     * @var array
      */
-    protected $container;
+    protected $configuration;
 
     /**
      * Symfony Event Dispatcher
@@ -43,24 +41,14 @@ class MessageManager implements ContainerAwareInterface {
     private $dispatcher = null;
 
     /**
-     * AMQP Adapter
-     *
-     * @var mixed
-     *
-     */
-    private $adapter = null;
-
-    /**
      * Constructor
      *
      * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $dispatcher
-     * @param mixed $adapter
      *
      */
-    public function __construct(EventDispatcherInterface $dispatcher, $adapter = null)
+    public function __construct(EventDispatcherInterface $dispatcher)
     {
         $this->dispatcher = $dispatcher;
-        $this->adapter = $adapter;
     }
 
     /**
@@ -69,9 +57,9 @@ class MessageManager implements ContainerAwareInterface {
      * @param ContainerInterface|null $container A ContainerInterface instance or null
      *
      */
-    public function setContainer(ContainerInterface $container = null)
+    public function setConfiguration(array $configuration)
     {
-        $this->container = $container;
+        $this->configuration = $configuration;
     }
 
     /**
@@ -198,8 +186,9 @@ class MessageManager implements ContainerAwareInterface {
      */
     public function getMessagePrefix()
     {
-        $config = $this->container->getParameter('ecentria_rest.config');
-        return $config['domain_message_prefix'];
+//        $config = $this->configuration['ecentria_rest.config'];
+//        return $config['domain_message_prefix'];
+        return 'eee.';
     }
 
 } 

@@ -11,7 +11,7 @@
 namespace Ecentria\Libraries\EcentriaAPIEventsBundle\Consumer;
 use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
 use PhpAmqpLib\Message\AMQPMessage;
-use  Ecentria\Libraries\EcentriaAPIEventsBundle\Services\MessageManager;
+use  Ecentria\Libraries\EcentriaAPIEventsBundle\Services\MessageDispatcher;
 
 /**
  * Message Consumer
@@ -26,12 +26,12 @@ class MessageConsumer implements ConsumerInterface
     /**
      * Message Manager
      *
-     * @var MessageManager
+     * @var MessageDispatcher
      */
     private $messageManager;
 
 
-    public function __construct(MessageManager $messageManager)
+    public function __construct(MessageDispatcher $messageManager)
     {
         $this->messageManager = $messageManager;
     }
