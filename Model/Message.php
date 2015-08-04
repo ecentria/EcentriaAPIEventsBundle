@@ -19,6 +19,13 @@ namespace Ecentria\Libraries\EcentriaAPIEventsBundle\Model;
  */
 class Message
 {
+    const SOURCE_TYPE_DATA_SOURCE      = 'data-source';
+    const SOURCE_TYPE_SERVICE_RESOURCE = 'service-resource';
+
+    const OPERATION_CREATE = 'create';
+    const OPERATION_UPDATE = 'update';
+    const OPERATION_DELETE = 'delete';
+
     /**
      * Message id
      *
@@ -72,7 +79,7 @@ class Message
      * this value is stored as a string and can be anything from an int to serialized data
      * @var string|null
      */
-    private $previoueValue;
+    private $previousValue;
 
     /**
      * Message operation datetime
@@ -157,17 +164,17 @@ class Message
     /**
      * @return null|string
      */
-    public function getPrevioueValue()
+    public function getPreviousValue()
     {
-        return $this->previoueValue;
+        return $this->previousValue;
     }
 
     /**
-     * @param null|string $previoueValue
+     * @param null|string $previousValue
      */
-    public function setPrevioueValue($previoueValue)
+    public function setPreviousValue($previousValue)
     {
-        $this->previoueValue = $previoueValue;
+        $this->previousValue = $previousValue;
     }
 
     /**
