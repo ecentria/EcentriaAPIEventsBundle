@@ -12,6 +12,7 @@ namespace Ecentria\Libraries\EcentriaAPIEventsBundle\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
+use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\DependencyInjection\Loader;
 
@@ -35,7 +36,14 @@ class EcentriaAPIEventsExtension extends Extension
         $configuration = $this->getConfiguration($configs, $container);
         $config = $this->processConfiguration($configuration, $configs);
 
-        $container->setParameter($this->getAlias() . '.config', $config);
+        $container->setParameter($this->getAlias() . '.domain_message_prefix', $config['domain_message_prefix']);
+
+        $container->getDefinition('ecentria.api.domain_message.manager')
+            ->addMethodCall('setEventPrefix', [$config['domain_message_prefix']]);
+
+        $container->getDefinition('ecentria.api.domain_message_consumer.service')
+            ->addArgument(new Reference($config['domain_message_serializer']));
+
     }
 
     /**
@@ -43,6 +51,6 @@ class EcentriaAPIEventsExtension extends Extension
      */
     public function getAlias()
     {
-        return 'ecentria_apievents';
+        return 'ecentria_api_events';
     }
 }

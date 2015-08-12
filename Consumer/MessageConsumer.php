@@ -9,6 +9,9 @@
  */
 
 namespace Ecentria\Libraries\EcentriaAPIEventsBundle\Consumer;
+
+use Ecentria\Libraries\EcentriaAPIEventsBundle\Model\Message;
+use JMS\Serializer\SerializerInterface;
 use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
 use PhpAmqpLib\Message\AMQPMessage;
 use  Ecentria\Libraries\EcentriaAPIEventsBundle\Services\MessageDispatcher;
@@ -28,12 +31,25 @@ class MessageConsumer implements ConsumerInterface
      *
      * @var MessageDispatcher
      */
-    private $messageManager;
+    private $messageDispatcher;
 
+    /**
+     * Serializer
+     *
+     * @var SerializerInterface
+     */
+    private $serializer;
 
-    public function __construct(MessageDispatcher $messageManager)
+    /**
+     * Constructor
+     *
+     * @param MessageDispatcher   $messageManager
+     * @param SerializerInterface $serializer
+     */
+    public function __construct(MessageDispatcher $messageManager, SerializerInterface $serializer)
     {
-        $this->messageManager = $messageManager;
+        $this->messageDispatcher = $messageManager;
+        $this->serializer = $serializer;
     }
 
     /**
@@ -45,10 +61,10 @@ class MessageConsumer implements ConsumerInterface
      */
     public function execute(AMQPMessage $msg)
     {
-        $rawMessage = json_decode($msg->body);
-        $message = $this->messageManager->createMessageFromData($rawMessage);
-        $this->messageManager->dispatchMessage($message);
+        /** @var Message $message */
+        $message = $this->serializer
+            ->deserialize($msg->body, 'Ecentria\Libraries\EcentriaAPIEventsBundle\Model\Message', 'json');
+        $this->messageDispatcher->dispatchMessage($message);
         return true;
     }
-
 }

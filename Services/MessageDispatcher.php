@@ -26,11 +26,11 @@ use Ecentria\Libraries\EcentriaAPIEventsBundle\Event\MessageEvent;
 class MessageDispatcher
 {
     /**
-     * Configuration
+     * Domain event prefix
      *
-     * @var array
+     * @var string
      */
-    protected $configuration;
+    private $eventPrefix;
 
     /**
      * Symfony Event Dispatcher
@@ -38,7 +38,7 @@ class MessageDispatcher
      * @var \Symfony\Component\EventDispatcher\EventDispatcherInterface
      *
      */
-    private $dispatcher = null;
+    private $dispatcher;
 
     /**
      * Constructor
@@ -52,38 +52,14 @@ class MessageDispatcher
     }
 
     /**
-     * Sets the Container.
-     * @todo remove this and just inject the relevent config
-     * @param ContainerInterface|null $container A ContainerInterface instance or null
+     * Sets domain event prefix
+     *
+     * @param string $eventPrefix Domain event prefix
      *
      */
-    public function setConfiguration(array $configuration)
+    public function setEventPrefix($eventPrefix)
     {
-        $this->configuration = $configuration;
-    }
-
-    /**
-     * Creates a message object based on a domain message
-     *
-     * @param array $data the input data
-     *
-     * @return \Ecentria\Libraries\EcentriaAPIEventsBundle\Model\Message
-     */
-    public function createMessageFromData($data)
-    {
-        $message = $this->getMessageObject();
-        foreach ($data as $key => $val) {
-            $setMethod = 'set'.$key;
-            if (method_exists($message,$setMethod))
-            {
-                $message->$setMethod($val);
-            }
-            else
-            {
-                // @todo check config value option to either ignore invalid properties or throw an exception
-            }
-        }
-        return $message;
+        $this->eventPrefix = $eventPrefix;
     }
 
     /**
@@ -96,8 +72,7 @@ class MessageDispatcher
     {
         $event = $this->getMessageEventObject();
         $event->setMessage($message);
-        $this->dispatcher->dispatch($this->getMessagePrefix().$message->getSource(),$event);
-
+        $this->dispatcher->dispatch($this->getEventPrefix() . $message->getSource(), $event);
     }
 
     /**
@@ -133,7 +108,7 @@ class MessageDispatcher
 
 
         $domain_listeners = array();
-        $prefix = $this->getMessagePrefix();
+        $prefix = $this->getEventPrefix();
         $prefix_length = strlen($prefix);
         foreach ($all_listeners as $event_name => $listener_by_event) {
 
@@ -157,7 +132,7 @@ class MessageDispatcher
         $domain_listeners = $this->getInternalEventListeners();
         $keys = array();
 
-        $prefix = $this->getMessagePrefix();
+        $prefix = $this->getEventPrefix();
         $prefix_length = strlen($prefix);
 
         foreach ($domain_listeners as $key => $listener)
@@ -179,16 +154,14 @@ class MessageDispatcher
     }
 
     /**
-     * returns the configured prefix for domain messages (which should include the trailing dot "."
+     * returns the configured prefix for domain messages
      *
      * @return string
      *
      */
-    public function getMessagePrefix()
+    public function getEventPrefix()
     {
-//        $config = $this->configuration['ecentria_rest.config'];
-//        return $config['domain_message_prefix'];
-        return 'eee.';
+        return $this->eventPrefix;
     }
 
 } 
