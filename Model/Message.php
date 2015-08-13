@@ -10,6 +10,8 @@
 
 namespace Ecentria\Libraries\EcentriaAPIEventsBundle\Model;
 
+use JMS\Serializer\Annotation\Type;
+
 /**
  * Message Model
  *
@@ -17,10 +19,19 @@ namespace Ecentria\Libraries\EcentriaAPIEventsBundle\Model;
  *
  * @author Justin Shanks <justin.shanks@opticsplanet.com>
  */
-class Message
+class Message implements MessageInterface
 {
+    const SOURCE_TYPE_DATA_SOURCE      = 'data-source';
+    const SOURCE_TYPE_SERVICE_RESOURCE = 'service-resource';
+
+    const OPERATION_CREATE = 'create';
+    const OPERATION_UPDATE = 'update';
+    const OPERATION_DELETE = 'delete';
+
     /**
      * Message id
+     *
+     * @Type("string")
      *
      * Primary identifier
      * @var string|int
@@ -38,6 +49,8 @@ class Message
      *
      * Possible Values: data-source|service-resource
      * @var string
+     *
+     * @Type("string")
      */
     private $sourceType;
 
@@ -46,6 +59,8 @@ class Message
      *
      * A period separated path that identifies where the change originated. Example MyAppDb.customerTable.columnName
      * @var string
+     *
+     * @Type("string")
      */
     private $source;
 
@@ -54,6 +69,8 @@ class Message
      *
      * create|update|delete
      * @var string
+     *
+     * @Type("string")
      */
     private $operation;
 
@@ -62,6 +79,8 @@ class Message
      *
      * content of the message (null if delete, new value if update or create). this value is stored as a string and can be anything from an int to serialized data
      * @var string|null
+     *
+     * @Type("array")
      */
     private $value;
 
@@ -71,14 +90,18 @@ class Message
      * if delete or or update, this property is expected to have the old value
      * this value is stored as a string and can be anything from an int to serialized data
      * @var string|null
+     *
+     * @Type("array")
      */
-    private $previoueValue;
+    private $previousValue;
 
     /**
      * Message operation datetime
      *
      * the datetime that the operation happened on the source system
      * @var datetime
+     *
+     * @Type("DateTime")
      */
     private $operationDatetime;
 
@@ -87,8 +110,15 @@ class Message
      *
      * the datetime that the message was generated
      * @var datetime
+     *
+     * @Type("DateTime")
      */
     private $messageDatetime;
+
+    public function __construct()
+    {
+        $this->messageDatetime = new \DateTime();
+    }
 
     /**
      * @return int|string
@@ -115,9 +145,9 @@ class Message
     }
 
     /**
-     * @param datetime $messageDatetime
+     * @param \DateTime $messageDatetime
      */
-    public function setMessageDatetime($messageDatetime)
+    public function setMessageDatetime(\DateTime $messageDatetime)
     {
         $this->messageDatetime = $messageDatetime;
     }
@@ -139,7 +169,7 @@ class Message
     }
 
     /**
-     * @return datetime
+     * @return \DateTime
      */
     public function getOperationDatetime()
     {
@@ -147,9 +177,9 @@ class Message
     }
 
     /**
-     * @param datetime $operationDatetime
+     * @param \DateTime $operationDatetime
      */
-    public function setOperationDatetime($operationDatetime)
+    public function setOperationDatetime(\DateTime $operationDatetime)
     {
         $this->operationDatetime = $operationDatetime;
     }
@@ -157,17 +187,17 @@ class Message
     /**
      * @return null|string
      */
-    public function getPrevioueValue()
+    public function getPreviousValue()
     {
-        return $this->previoueValue;
+        return $this->previousValue;
     }
 
     /**
-     * @param null|string $previoueValue
+     * @param null|string $previousValue
      */
-    public function setPrevioueValue($previoueValue)
+    public function setPreviousValue($previousValue)
     {
-        $this->previoueValue = $previoueValue;
+        $this->previousValue = $previousValue;
     }
 
     /**

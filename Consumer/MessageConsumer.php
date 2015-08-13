@@ -9,9 +9,12 @@
  */
 
 namespace Ecentria\Libraries\EcentriaAPIEventsBundle\Consumer;
+
+use Ecentria\Libraries\EcentriaAPIEventsBundle\Model\MessageInterface;
+use JMS\Serializer\SerializerInterface;
 use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
 use PhpAmqpLib\Message\AMQPMessage;
-use  Ecentria\Libraries\EcentriaAPIEventsBundle\Services\MessageManager;
+use  Ecentria\Libraries\EcentriaAPIEventsBundle\Services\MessageDispatcher;
 
 /**
  * Message Consumer
@@ -24,31 +27,68 @@ use  Ecentria\Libraries\EcentriaAPIEventsBundle\Services\MessageManager;
 class MessageConsumer implements ConsumerInterface
 {
     /**
+     * Domain message class name
+     * Is used for json deserialization
+     *
+     * @var string
+     */
+    private $messageClassName;
+
+    /**
      * Message Manager
      *
-     * @var MessageManager
+     * @var MessageDispatcher
      */
-    private $messageManager;
+    private $messageDispatcher;
 
+    /**
+     * Serializer
+     *
+     * @var SerializerInterface
+     */
+    private $serializer;
 
-    public function __construct(MessageManager $messageManager)
+    /**
+     * Constructor
+     *
+     * @param MessageDispatcher   $messageDispatcher
+     * @param SerializerInterface $serializer
+     */
+    public function __construct(MessageDispatcher $messageDispatcher, SerializerInterface $serializer)
     {
-        $this->messageManager = $messageManager;
+        $this->messageDispatcher = $messageDispatcher;
+        $this->serializer = $serializer;
     }
 
     /**
      * Execute
      *
      * @param AMQPMessage $msg The message
+     * @throws \InvalidArgumentException
      *
      * @return mixed false to reject and requeue, any other value to acknowledge
      */
     public function execute(AMQPMessage $msg)
     {
-        $rawMessage = json_decode($msg->body);
-        $message = $this->messageManager->createMessageFromData($rawMessage);
-        $this->messageManager->dispatchMessage($message);
+        if (is_null($this->messageClassName)) {
+            throw new \InvalidArgumentException('You have to specify Domain class name');
+        }
+        /** @var MessageInterface $message */
+        $message = $this->serializer
+            ->deserialize($msg->body, $this->messageClassName, 'json');
+        $this->messageDispatcher->dispatchMessage($message);
         return true;
     }
 
+    /**
+     * Set domain message class name
+     *
+     * @param string $messageClassName Class name
+     *
+     * @return void
+     */
+    public function setMessageClassName($messageClassName)
+    {
+        $this->messageClassName = $messageClassName;
+    }
 }

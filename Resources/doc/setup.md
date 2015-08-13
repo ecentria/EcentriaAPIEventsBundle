@@ -36,3 +36,11 @@ public function registerBundles()
     );
 }
 ```
+C: Install Ecentria API Events Bundle
+-------------------------------------
+
+Specify serializer service in config.yml
+```
+    ecentria_api_events:
+        domain_message_serializer: jms_serializer
+```

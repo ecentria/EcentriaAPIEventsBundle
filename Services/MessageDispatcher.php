@@ -10,11 +10,10 @@
 
 namespace Ecentria\Libraries\EcentriaAPIEventsBundle\Services;
 
-use Symfony\Component\DependencyInjection\ContainerAwareInterface,
-    \Symfony\Component\DependencyInjection\ContainerInterface,
-    Ecentria\Libraries\EcentriaAPIEventsBundle\Model\Message,
-    Symfony\Component\EventDispatcher\EventDispatcherInterface,
-    Ecentria\Libraries\EcentriaAPIEventsBundle\Event\MessageEvent;
+use Ecentria\Libraries\EcentriaAPIEventsBundle\Model\Message;
+use Ecentria\Libraries\EcentriaAPIEventsBundle\Model\MessageInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Ecentria\Libraries\EcentriaAPIEventsBundle\Event\MessageEvent;
 
 /**
  * Message Manager Service
@@ -25,14 +24,14 @@ use Symfony\Component\DependencyInjection\ContainerAwareInterface,
  *
  * @author Justin Shanks <justin.shanks@opticsplanet.com>
  */
-class MessageManager implements ContainerAwareInterface {
-
+class MessageDispatcher
+{
     /**
-     * DI Container object
+     * Domain event prefix
      *
-     * @var \Symfony\Component\DependencyInjection\Container
+     * @var string
      */
-    protected $container;
+    private $eventPrefix;
 
     /**
      * Symfony Event Dispatcher
@@ -40,76 +39,41 @@ class MessageManager implements ContainerAwareInterface {
      * @var \Symfony\Component\EventDispatcher\EventDispatcherInterface
      *
      */
-    private $dispatcher = null;
-
-    /**
-     * AMQP Adapter
-     *
-     * @var mixed
-     *
-     */
-    private $adapter = null;
+    private $dispatcher;
 
     /**
      * Constructor
      *
      * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $dispatcher
-     * @param mixed $adapter
      *
      */
-    public function __construct(EventDispatcherInterface $dispatcher, $adapter = null)
+    public function __construct(EventDispatcherInterface $dispatcher)
     {
         $this->dispatcher = $dispatcher;
-        $this->adapter = $adapter;
     }
 
     /**
-     * Sets the Container.
-     * @todo remove this and just inject the relevent config
-     * @param ContainerInterface|null $container A ContainerInterface instance or null
+     * Sets domain event prefix
+     *
+     * @param string $eventPrefix Domain event prefix
      *
      */
-    public function setContainer(ContainerInterface $container = null)
+    public function setEventPrefix($eventPrefix)
     {
-        $this->container = $container;
-    }
-
-    /**
-     * Creates a message object based on a domain message
-     *
-     * @param array $data the input data
-     *
-     * @return \Ecentria\Libraries\EcentriaAPIEventsBundle\Model\Message
-     */
-    public function createMessageFromData($data)
-    {
-        $message = $this->getMessageObject();
-        foreach ($data as $key => $val) {
-            $setMethod = 'set'.$key;
-            if (method_exists($message,$setMethod))
-            {
-                $message->$setMethod($val);
-            }
-            else
-            {
-                // @todo check config value option to either ignore invalid properties or throw an exception
-            }
-        }
-        return $message;
+        $this->eventPrefix = $eventPrefix;
     }
 
     /**
      * Converts a message to a MessageEvent and dispatches it
      *
-     * @param \Ecentria\Libraries\EcentriaAPIEventsBundle\Model\Message $message the input data
+     * @param MessageInterface $message the input data
      *
      */
-    public function dispatchMessage(Message $message)
+    public function dispatchMessage(MessageInterface $message)
     {
         $event = $this->getMessageEventObject();
         $event->setMessage($message);
-        $this->dispatcher->dispatch($this->getMessagePrefix().$message->getSource(),$event);
-
+        $this->dispatcher->dispatch($this->getEventPrefix() . $message->getSource(), $event);
     }
 
     /**
@@ -145,7 +109,7 @@ class MessageManager implements ContainerAwareInterface {
 
 
         $domain_listeners = array();
-        $prefix = $this->getMessagePrefix();
+        $prefix = $this->getEventPrefix();
         $prefix_length = strlen($prefix);
         foreach ($all_listeners as $event_name => $listener_by_event) {
 
@@ -169,7 +133,7 @@ class MessageManager implements ContainerAwareInterface {
         $domain_listeners = $this->getInternalEventListeners();
         $keys = array();
 
-        $prefix = $this->getMessagePrefix();
+        $prefix = $this->getEventPrefix();
         $prefix_length = strlen($prefix);
 
         foreach ($domain_listeners as $key => $listener)
@@ -191,15 +155,14 @@ class MessageManager implements ContainerAwareInterface {
     }
 
     /**
-     * returns the configured prefix for domain messages (which should include the trailing dot "."
+     * returns the configured prefix for domain messages
      *
      * @return string
      *
      */
-    public function getMessagePrefix()
+    public function getEventPrefix()
     {
-        $config = $this->container->getParameter('ecentria_rest.config');
-        return $config['domain_message_prefix'];
+        return $this->eventPrefix;
     }
 
-} 
+}
