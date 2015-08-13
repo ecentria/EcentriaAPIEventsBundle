@@ -10,8 +10,9 @@
 
 namespace Ecentria\Libraries\EcentriaAPIEventsBundle\Event;
 
-use Symfony\Component\EventDispatcher\Event,
-    Ecentria\Libraries\EcentriaAPIEventsBundle\Model\Message;
+use Ecentria\Libraries\EcentriaAPIEventsBundle\Model\MessageInterface;
+use Symfony\Component\EventDispatcher\Event;
+use Ecentria\Libraries\EcentriaAPIEventsBundle\Model\Message;
 
 /**
  * Message Model
@@ -20,7 +21,8 @@ use Symfony\Component\EventDispatcher\Event,
  *
  * @author Justin Shanks <justin.shanks@opticsplanet.com>
  */
-class MessageEvent extends Event {
+class MessageEvent extends Event
+{
 
     /**
      * Message
@@ -30,7 +32,9 @@ class MessageEvent extends Event {
     private $message;
 
     /**
-     * @return Message
+     * Get message
+     *
+     * @return MessageInterface
      */
     public function getMessage()
     {
@@ -38,11 +42,12 @@ class MessageEvent extends Event {
     }
 
     /**
-     * @param Message $message
+     * Get message
+     *
+     * @param MessageInterface $message Message
      */
-    public function setMessage(Message $message)
+    public function setMessage(MessageInterface $message)
     {
         $this->message = $message;
     }
-
-} 
+}

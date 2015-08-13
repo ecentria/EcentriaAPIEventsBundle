@@ -10,7 +10,7 @@
 
 namespace Ecentria\Libraries\EcentriaAPIEventsBundle\Consumer;
 
-use Ecentria\Libraries\EcentriaAPIEventsBundle\Model\Message;
+use Ecentria\Libraries\EcentriaAPIEventsBundle\Model\MessageInterface;
 use JMS\Serializer\SerializerInterface;
 use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
 use PhpAmqpLib\Message\AMQPMessage;
@@ -26,6 +26,14 @@ use  Ecentria\Libraries\EcentriaAPIEventsBundle\Services\MessageDispatcher;
  */
 class MessageConsumer implements ConsumerInterface
 {
+    /**
+     * Domain message class name
+     * Is used for json deserialization
+     *
+     * @var string
+     */
+    private $messageClassName;
+
     /**
      * Message Manager
      *
@@ -43,12 +51,12 @@ class MessageConsumer implements ConsumerInterface
     /**
      * Constructor
      *
-     * @param MessageDispatcher   $messageManager
+     * @param MessageDispatcher   $messageDispatcher
      * @param SerializerInterface $serializer
      */
-    public function __construct(MessageDispatcher $messageManager, SerializerInterface $serializer)
+    public function __construct(MessageDispatcher $messageDispatcher, SerializerInterface $serializer)
     {
-        $this->messageDispatcher = $messageManager;
+        $this->messageDispatcher = $messageDispatcher;
         $this->serializer = $serializer;
     }
 
@@ -56,15 +64,31 @@ class MessageConsumer implements ConsumerInterface
      * Execute
      *
      * @param AMQPMessage $msg The message
+     * @throws \InvalidArgumentException
      *
      * @return mixed false to reject and requeue, any other value to acknowledge
      */
     public function execute(AMQPMessage $msg)
     {
-        /** @var Message $message */
+        if (is_null($this->messageClassName)) {
+            throw new \InvalidArgumentException('You have to specify Domain class name');
+        }
+        /** @var MessageInterface $message */
         $message = $this->serializer
-            ->deserialize($msg->body, 'Ecentria\Libraries\EcentriaAPIEventsBundle\Model\Message', 'json');
+            ->deserialize($msg->body, $this->messageClassName, 'json');
         $this->messageDispatcher->dispatchMessage($message);
         return true;
+    }
+
+    /**
+     * Set domain message class name
+     *
+     * @param string $messageClassName Class name
+     *
+     * @return void
+     */
+    public function setMessageClassName($messageClassName)
+    {
+        $this->messageClassName = $messageClassName;
     }
 }

@@ -11,6 +11,7 @@
 namespace Ecentria\Libraries\EcentriaAPIEventsBundle\Services;
 
 use Ecentria\Libraries\EcentriaAPIEventsBundle\Model\Message;
+use Ecentria\Libraries\EcentriaAPIEventsBundle\Model\MessageInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Ecentria\Libraries\EcentriaAPIEventsBundle\Event\MessageEvent;
 
@@ -65,10 +66,10 @@ class MessageDispatcher
     /**
      * Converts a message to a MessageEvent and dispatches it
      *
-     * @param \Ecentria\Libraries\EcentriaAPIEventsBundle\Model\Message $message the input data
+     * @param MessageInterface $message the input data
      *
      */
-    public function dispatchMessage(Message $message)
+    public function dispatchMessage(MessageInterface $message)
     {
         $event = $this->getMessageEventObject();
         $event->setMessage($message);
@@ -164,4 +165,4 @@ class MessageDispatcher
         return $this->eventPrefix;
     }
 
-} 
+}

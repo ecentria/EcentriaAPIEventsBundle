@@ -19,7 +19,7 @@ use JMS\Serializer\Annotation\Type;
  *
  * @author Justin Shanks <justin.shanks@opticsplanet.com>
  */
-class Message
+class Message implements MessageInterface
 {
     const SOURCE_TYPE_DATA_SOURCE      = 'data-source';
     const SOURCE_TYPE_SERVICE_RESOURCE = 'service-resource';
