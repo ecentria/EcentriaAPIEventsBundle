@@ -4,5 +4,6 @@
 /vendor/
 /.idea
 composer.lock
+composer.phar
 /Tests/Controller/App/cache/*
 /Tests/Controller/App/logs/*
