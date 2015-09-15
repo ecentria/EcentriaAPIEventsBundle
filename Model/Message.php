@@ -28,6 +28,7 @@ class Message implements MessageInterface
     const OPERATION_CREATE = 'create';
     const OPERATION_UPDATE = 'update';
     const OPERATION_DELETE = 'delete';
+    const OPERATION_WORK   = 'work';
 
     /**
      * Message id
@@ -69,7 +70,7 @@ class Message implements MessageInterface
     /**
      * Message operation
      *
-     * create|update|delete
+     * create|update|delete|work
      * @var string
      *
      * @Type("string")
