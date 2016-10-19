@@ -10,6 +10,7 @@
 
 namespace Ecentria\Libraries\EcentriaAPIEventsBundle\Consumer;
 
+use Ecentria\Libraries\EcentriaAPIEventsBundle\Exception\FlowException;
 use Ecentria\Libraries\EcentriaAPIEventsBundle\Model\MessageInterface;
 use JMS\Serializer\SerializerInterface;
 use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
@@ -74,9 +75,14 @@ class MessageConsumer implements ConsumerInterface
             throw new \InvalidArgumentException('You have to specify Domain class name');
         }
         /** @var MessageInterface $message */
-        $message = $this->serializer
-            ->deserialize($msg->body, $this->messageClassName, 'json');
-        $this->messageDispatcher->dispatchMessage($message);
+        try {
+            $message = $this->serializer
+                ->deserialize($msg->body, $this->messageClassName, 'json');
+            $this->messageDispatcher->dispatchMessage($message);
+        } catch (FlowException $e) {
+            return $e->getFlag();
+        }
+        
         return true;
     }
 
