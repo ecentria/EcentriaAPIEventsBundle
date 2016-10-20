@@ -23,10 +23,12 @@ class Message implements MessageInterface
 {
     const SOURCE_TYPE_DATA_SOURCE      = 'data-source';
     const SOURCE_TYPE_SERVICE_RESOURCE = 'service-resource';
+    const SOURCE_TYPE_SERVICE_WORK     = 'service-work';
 
     const OPERATION_CREATE = 'create';
     const OPERATION_UPDATE = 'update';
     const OPERATION_DELETE = 'delete';
+    const OPERATION_WORK   = 'work';
 
     /**
      * Message id
@@ -46,6 +48,7 @@ class Message implements MessageInterface
      *     a change in the underlying data source of a service.  Date source messages should
      *     only be consumer by the service that is considered the master data manager for that data.
      * - Service-resource means that a related service resource has changed.
+     * - Service-work means a task to be completed.
      *
      * Possible Values: data-source|service-resource
      * @var string
@@ -67,7 +70,7 @@ class Message implements MessageInterface
     /**
      * Message operation
      *
-     * create|update|delete
+     * create|update|delete|work
      * @var string
      *
      * @Type("string")
