@@ -16,7 +16,7 @@ namespace Ecentria\Libraries\EcentriaAPIEventsBundle\Exception;
  * @copyright   2016 OpticsPlanet, Inc
  * @author      Eugene Boiarynov <ievgen.boiarynov@opticsplanet.com>
  */
-abstract class FlowException extends \Exception
+abstract class LifecircleException extends \Exception
 {
     /**
      * Returns a flag value

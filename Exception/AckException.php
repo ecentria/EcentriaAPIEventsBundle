@@ -18,7 +18,7 @@ use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
  * @copyright   2016 OpticsPlanet, Inc
  * @author      Eugene Boiarynov <ievgen.boiarynov@opticsplanet.com>
  */
-class AckException extends FlowException
+class AckException extends LifecircleException
 {
     /**
      * Get flag
