@@ -19,7 +19,7 @@ use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
  * @copyright   2016 OpticsPlanet, Inc
  * @author      Eugene Boiarynov <ievgen.boiarynov@opticsplanet.com>
  */
-class RejectException extends LifecircleException
+class RejectException extends ConsumerException
 {
     /**
      * Get flag

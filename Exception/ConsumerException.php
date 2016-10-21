@@ -16,7 +16,7 @@ namespace Ecentria\Libraries\EcentriaAPIEventsBundle\Exception;
  * @copyright   2016 OpticsPlanet, Inc
  * @author      Eugene Boiarynov <ievgen.boiarynov@opticsplanet.com>
  */
-abstract class LifecircleException extends \Exception
+abstract class ConsumerException extends \Exception
 {
     /**
      * Returns a flag value

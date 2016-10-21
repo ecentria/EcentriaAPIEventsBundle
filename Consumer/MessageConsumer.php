@@ -10,7 +10,7 @@
 
 namespace Ecentria\Libraries\EcentriaAPIEventsBundle\Consumer;
 
-use Ecentria\Libraries\EcentriaAPIEventsBundle\Exception\LifecircleException;
+use Ecentria\Libraries\EcentriaAPIEventsBundle\Exception\ConsumerException;
 use Ecentria\Libraries\EcentriaAPIEventsBundle\Model\MessageInterface;
 use JMS\Serializer\SerializerInterface;
 use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
@@ -82,7 +82,7 @@ class MessageConsumer implements ConsumerInterface
             $message = $this->serializer
                 ->deserialize($msg->body, $this->messageClassName, 'json');
             $this->messageDispatcher->dispatchMessage($message);
-        } catch (LifecircleException $e) {
+        } catch (ConsumerException $e) {
             return $e->getFlag();
         }
         
