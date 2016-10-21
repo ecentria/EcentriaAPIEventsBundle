@@ -63,11 +63,14 @@ class MessageConsumer implements ConsumerInterface
 
     /**
      * Execute
+     * Returns: 0 - reject and requeue, 1 - remove from the queue
+     * 2 - nack and requeue, -1 - reject and drop 
+     * 
      *
      * @param AMQPMessage $msg The message
      * @throws \InvalidArgumentException
      *
-     * @return mixed false to reject and requeue, any other value to acknowledge
+     * @return mixed Message status
      */
     public function execute(AMQPMessage $msg)
     {
