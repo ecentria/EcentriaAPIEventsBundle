@@ -10,6 +10,7 @@
 
 namespace Ecentria\Libraries\EcentriaAPIEventsBundle\Consumer;
 
+use Ecentria\Libraries\EcentriaAPIEventsBundle\Exception\ConsumerException;
 use Ecentria\Libraries\EcentriaAPIEventsBundle\Model\MessageInterface;
 use JMS\Serializer\SerializerInterface;
 use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
@@ -62,11 +63,14 @@ class MessageConsumer implements ConsumerInterface
 
     /**
      * Execute
+     * Returns: 0 - reject and requeue, 1 - remove from the queue
+     * 2 - nack and requeue, -1 - reject and drop 
+     * 
      *
      * @param AMQPMessage $msg The message
      * @throws \InvalidArgumentException
      *
-     * @return mixed false to reject and requeue, any other value to acknowledge
+     * @return mixed Message status
      */
     public function execute(AMQPMessage $msg)
     {
@@ -74,9 +78,14 @@ class MessageConsumer implements ConsumerInterface
             throw new \InvalidArgumentException('You have to specify Domain class name');
         }
         /** @var MessageInterface $message */
-        $message = $this->serializer
-            ->deserialize($msg->body, $this->messageClassName, 'json');
-        $this->messageDispatcher->dispatchMessage($message);
+        try {
+            $message = $this->serializer
+                ->deserialize($msg->body, $this->messageClassName, 'json');
+            $this->messageDispatcher->dispatchMessage($message);
+        } catch (ConsumerException $e) {
+            return $e->getFlag();
+        }
+        
         return true;
     }
 
