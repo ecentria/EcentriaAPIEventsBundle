@@ -83,9 +83,11 @@ class MessageConsumer implements ConsumerInterface
                 ->deserialize($msg->body, $this->messageClassName, 'json');
             $this->messageDispatcher->dispatchMessage($message);
         } catch (ConsumerException $e) {
+            if ($e->stopConsuming()) {
+                $msg->delivery_info['channel']->basic_cancel($msg->delivery_info['consumer_tag']);
+            }
             return $e->getFlag();
         }
-        
         return true;
     }
 
