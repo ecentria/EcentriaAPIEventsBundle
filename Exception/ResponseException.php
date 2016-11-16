@@ -24,7 +24,9 @@ use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
 class ResponseException extends ConsumerException
 {
     /**
-     * Message status flag
+     * Response status flag
+     * Possible values are listed here:
+     * \OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface
      *
      * @var int
      */
