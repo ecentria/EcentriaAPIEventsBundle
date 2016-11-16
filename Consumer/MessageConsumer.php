@@ -10,7 +10,7 @@
 
 namespace Ecentria\Libraries\EcentriaAPIEventsBundle\Consumer;
 
-use Ecentria\Libraries\EcentriaAPIEventsBundle\Exception\ConsumerException;
+use Ecentria\Libraries\EcentriaAPIEventsBundle\Exception\ResponseException;
 use Ecentria\Libraries\EcentriaAPIEventsBundle\Model\MessageInterface;
 use JMS\Serializer\SerializerInterface;
 use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
@@ -82,10 +82,12 @@ class MessageConsumer implements ConsumerInterface
             $message = $this->serializer
                 ->deserialize($msg->body, $this->messageClassName, 'json');
             $this->messageDispatcher->dispatchMessage($message);
-        } catch (ConsumerException $e) {
+        } catch (ResponseException $e) {
+            if ($e->stopConsuming()) {
+                $msg->delivery_info['channel']->basic_cancel($msg->delivery_info['consumer_tag']);
+            }
             return $e->getFlag();
         }
-        
         return true;
     }
 

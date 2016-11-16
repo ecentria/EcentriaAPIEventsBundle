@@ -11,17 +11,11 @@
 namespace Ecentria\Libraries\EcentriaAPIEventsBundle\Exception;
 
 /**
- * Abstract Flow Exception
- * 
+ * Generic consumer exception
+ *
  * @copyright   2016 OpticsPlanet, Inc
  * @author      Eugene Boiarynov <ievgen.boiarynov@opticsplanet.com>
  */
-abstract class ConsumerException extends \Exception
+class ConsumerException extends \Exception
 {
-    /**
-     * Returns a flag value
-     * 
-     * @return int
-     */
-    abstract public function getFlag();
 }
