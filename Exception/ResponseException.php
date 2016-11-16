@@ -102,7 +102,7 @@ class ResponseException extends ConsumerException
      *
      * @return ResponseException
      */
-    public static function createdRejectAndRequeue($stopConsuming = false)
+    public static function createRejectAndRequeue($stopConsuming = false)
     {
         return new self(ConsumerInterface::MSG_REJECT_REQUEUE, $stopConsuming);
     }
