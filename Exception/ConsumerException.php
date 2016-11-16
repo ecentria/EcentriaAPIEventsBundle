@@ -33,18 +33,25 @@ class ConsumerException extends \Exception
      */
     private $stopConsuming;
 
+    /**
+     * Constructor
+     *
+     * @param string $flag          One of the message flag defined
+     *                              inside \OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface
+     * @param bool   $stopConsuming Whether it is necessary to stop the consumer or not
+     */
     public function __construct($flag, $stopConsuming = false)
     {
         if (
-        !in_array(
-            $flag,
-            [
-                ConsumerInterface::MSG_ACK,
-                ConsumerInterface::MSG_REJECT,
-                ConsumerInterface::MSG_REJECT_REQUEUE,
-                ConsumerInterface::MSG_SINGLE_NACK_REQUEUE
-            ]
-        )
+            !in_array(
+                $flag,
+                [
+                    ConsumerInterface::MSG_ACK,
+                    ConsumerInterface::MSG_REJECT,
+                    ConsumerInterface::MSG_REJECT_REQUEUE,
+                    ConsumerInterface::MSG_SINGLE_NACK_REQUEUE
+                ]
+            )
         ) {
             throw new \InvalidArgumentException(
                 sprintf('RabbitMQ ConsumerException can\'t get %s flag as a parameter', $flag)
@@ -54,18 +61,49 @@ class ConsumerException extends \Exception
         $this->stopConsuming = $stopConsuming;
     }
 
+    /**
+     * Creates exception with ConsumerInterface::MSG_ACK flag
+     *
+     * @param bool $stopConsuming Whether it is necessary to stop the consumer or not
+     *
+     * @return ConsumerException
+     */
     public static function ack($stopConsuming = false) {
         return new self(ConsumerInterface::MSG_ACK, $stopConsuming);
     }
 
+
+    /**
+     * Creates exception with ConsumerInterface::MSG_REJECT flag
+     *
+     * @param bool $stopConsuming Whether it is necessary to stop the consumer or not
+     *
+     * @return ConsumerException
+     */
     public static function reject($stopConsuming = false) {
         return new self(ConsumerInterface::MSG_REJECT, $stopConsuming);
     }
 
+
+    /**
+     * Creates exception with ConsumerInterface::MSG_REJECT_REQUEUE flag
+     *
+     * @param bool $stopConsuming Whether it is necessary to stop the consumer or not
+     *
+     * @return ConsumerException
+     */
     public static function rejectAndRequeue($stopConsuming = false) {
         return new self(ConsumerInterface::MSG_REJECT_REQUEUE, $stopConsuming);
     }
 
+
+    /**
+     * Creates exception with ConsumerInterface::MSG_SINGLE_NACK_REQUEUE flag
+     *
+     * @param bool $stopConsuming Whether it is necessary to stop the consumer or not
+     *
+     * @return ConsumerException
+     */
     public static function nackAndRequeue($stopConsuming = false) {
         return new self(ConsumerInterface::MSG_SINGLE_NACK_REQUEUE, $stopConsuming);
     }
@@ -79,6 +117,11 @@ class ConsumerException extends \Exception
         return $this->flag;
     }
 
+    /**
+     * Returns true if it is necessary to stop the consumer, false otherwise
+     *
+     * @return bool
+     */
     public function stopConsuming() {
         return $this->stopConsuming;
     }
