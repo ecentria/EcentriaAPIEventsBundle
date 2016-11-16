@@ -81,7 +81,6 @@ class ResponseException extends ConsumerException
         return new self(ConsumerInterface::MSG_ACK, $stopConsuming);
     }
 
-
     /**
      * Creates exception with ConsumerInterface::MSG_REJECT flag
      *
@@ -94,7 +93,6 @@ class ResponseException extends ConsumerException
         return new self(ConsumerInterface::MSG_REJECT, $stopConsuming);
     }
 
-
     /**
      * Creates exception with ConsumerInterface::MSG_REJECT_REQUEUE flag
      *
@@ -106,7 +104,6 @@ class ResponseException extends ConsumerException
     {
         return new self(ConsumerInterface::MSG_REJECT_REQUEUE, $stopConsuming);
     }
-
 
     /**
      * Creates exception with ConsumerInterface::MSG_SINGLE_NACK_REQUEUE flag
