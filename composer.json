@@ -2,7 +2,7 @@
     "name": "ecentria/ecentria-apievents-bundle",
     "type": "symfony-bundle",
     "minimum-stability": "dev",
-    "description": "Generic consumer and standard event message model meanth to pull in a domain event message from rabbitmq and repeat it as a symfony event to all listening services",
+    "description": "Generic consumer and standard event message model meant to pull in a domain event message from rabbitmq and repeat it as a symfony event to all listening services",
     "keywords": ["ecentria", "library", "events", "rabbitmq"],
     "homepage": "https://github.com/ecentria/EcentriaAPIEventsBundle",
     "license": "MIT",
@@ -21,7 +21,7 @@
     "require": {
         "php": ">=5.3.2",
         "symfony/event-dispatcher": "~2.5",
-        "oldsound/rabbitmq-bundle": "1.*",
+        "php-amqplib/rabbitmq-bundle": "1.*",
         "jms/serializer-bundle": "~0.13"
     },
     "require-dev": {
