@@ -39,6 +39,8 @@ class Configuration implements ConfigurationInterface
             ->children()
                 ->scalarNode('domain_message_prefix')->defaultValue('domain.')->end()
                 ->scalarNode('domain_message_serializer')->cannotBeEmpty()->end()
+                ->scalarNode('resend_producer')->cannotBeEmpty()->end()
+                ->scalarNode('quarantine_producer')->cannotBeEmpty()->end()
                 ->scalarNode('domain_message_class_name')
                     ->defaultValue('Ecentria\Libraries\EcentriaAPIEventsBundle\Model\Message')
                 ->end()

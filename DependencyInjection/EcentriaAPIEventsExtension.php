@@ -43,6 +43,8 @@ class EcentriaAPIEventsExtension extends Extension
 
         $container->getDefinition('ecentria.api.domain_message_consumer.service')
             ->addArgument(new Reference($config['domain_message_serializer']))
+            ->addArgument(new Reference($config['resend_producer']))
+            ->addArgument(new Reference($config['quarantine_producer']))
             ->addMethodCall('setMessageClassName', [$config['domain_message_class_name']]);
     }
 
