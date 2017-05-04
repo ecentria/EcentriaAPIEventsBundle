@@ -43,6 +43,7 @@ class EcentriaAPIEventsExtension extends Extension
 
         $container->getDefinition('ecentria.api.domain_message_consumer.service')
             ->addArgument(new Reference($config['domain_message_serializer']))
+            ->addArgument(new Reference($config['requeue_as_new_producer']))
             ->addMethodCall('setMessageClassName', [$config['domain_message_class_name']]);
     }
 

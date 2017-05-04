@@ -9,7 +9,7 @@
  */
 namespace Ecentria\Libraries\EcentriaAPIEventsBundle\Exception;
 
-use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
+use Ecentria\Libraries\EcentriaAPIEventsBundle\Model\Message;
 
 /**
  * Exception to deliver extensive response from the listener
@@ -23,6 +23,32 @@ use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
  */
 class ResponseException extends ConsumerException
 {
+
+    /**
+     * Flag for message ack
+     */
+    const ACK = 1;
+
+    /**
+     * Flag single for message nack and requeue
+     */
+    const NACK_REQUEUE = 2;
+
+    /**
+     * Flag for reject and requeue message to the same spot in main queue
+     */
+    const REJECT_REQUEUE = 3;
+
+    /**
+     * Flag for reject and drop message
+     */
+    const REJECT = 4;
+
+    /**
+     * Flag for ack and resend message to the end of main queue
+     */
+    const ACK_REQUEUE_AS_NEW = 5;
+
     /**
      * Response status flag
      * Possible values are listed here:
@@ -40,24 +66,33 @@ class ResponseException extends ConsumerException
     private $stopConsuming;
 
     /**
+     * Payload message to be used for some responses
+     *
+     * @var Message
+     */
+    private $payload;
+
+    /**
      * Constructor
      *
-     * @param string $flag          One of the message flag defined
-     *                              inside \OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface
-     * @param bool   $stopConsuming Whether it is necessary to stop the consumer or not
+     * @param string  $flag          One of the message flag defined
+     *                               inside \OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface
+     * @param bool    $stopConsuming Whether it is necessary to stop the consumer or not
+     * @param Message $message       Message to be used for some responses
      *
      * @throws \InvalidArgumentException
      */
-    public function __construct($flag, $stopConsuming = false)
+    public function __construct($flag, $stopConsuming = false, Message $payload = null)
     {
         if (
             !in_array(
                 $flag,
                 [
-                    ConsumerInterface::MSG_ACK,
-                    ConsumerInterface::MSG_REJECT,
-                    ConsumerInterface::MSG_REJECT_REQUEUE,
-                    ConsumerInterface::MSG_SINGLE_NACK_REQUEUE
+                    self::ACK,
+                    self::NACK_REQUEUE,
+                    self::REJECT_REQUEUE,
+                    self::REJECT,
+                    self::ACK_REQUEUE_AS_NEW
                 ]
             )
         ) {
@@ -67,10 +102,11 @@ class ResponseException extends ConsumerException
         }
         $this->flag = $flag;
         $this->stopConsuming = $stopConsuming;
+        $this->payload = $payload;
     }
 
     /**
-     * Creates exception with ConsumerInterface::MSG_ACK flag
+     * Creates exception with self::ACK flag
      *
      * @param bool $stopConsuming Whether it is necessary to stop the consumer or not
      *
@@ -78,11 +114,11 @@ class ResponseException extends ConsumerException
      */
     public static function createAck($stopConsuming = false)
     {
-        return new self(ConsumerInterface::MSG_ACK, $stopConsuming);
+        return new self(self::ACK, $stopConsuming);
     }
 
     /**
-     * Creates exception with ConsumerInterface::MSG_REJECT flag
+     * Creates exception with self::REJECT flag
      *
      * @param bool $stopConsuming Whether it is necessary to stop the consumer or not
      *
@@ -90,11 +126,11 @@ class ResponseException extends ConsumerException
      */
     public static function createReject($stopConsuming = false)
     {
-        return new self(ConsumerInterface::MSG_REJECT, $stopConsuming);
+        return new self(self::REJECT, $stopConsuming);
     }
 
     /**
-     * Creates exception with ConsumerInterface::MSG_REJECT_REQUEUE flag
+     * Creates exception with self::REJECT_REQUEUE flag
      *
      * @param bool $stopConsuming Whether it is necessary to stop the consumer or not
      *
@@ -102,11 +138,11 @@ class ResponseException extends ConsumerException
      */
     public static function createRejectAndRequeue($stopConsuming = false)
     {
-        return new self(ConsumerInterface::MSG_REJECT_REQUEUE, $stopConsuming);
+        return new self(self::REJECT_REQUEUE, $stopConsuming);
     }
 
     /**
-     * Creates exception with ConsumerInterface::MSG_SINGLE_NACK_REQUEUE flag
+     * Creates exception with self::NACK_REQUEUE flag
      *
      * @param bool $stopConsuming Whether it is necessary to stop the consumer or not
      *
@@ -114,7 +150,19 @@ class ResponseException extends ConsumerException
      */
     public static function createNackAndRequeue($stopConsuming = false)
     {
-        return new self(ConsumerInterface::MSG_SINGLE_NACK_REQUEUE, $stopConsuming);
+        return new self(self::NACK_REQUEUE, $stopConsuming);
+    }
+
+    /**
+     * Creates exception with self::ACK_REQUEUE_AS_NEW flag
+     *
+     * @param bool $stopConsuming Whether it is necessary to stop the consumer or not
+     *
+     * @return ResponseException
+     */
+    public static function createAckAndRequeueAsNew($stopConsuming = false, Message $message = null)
+    {
+        return new self(self::ACK_REQUEUE_AS_NEW, $stopConsuming, $message);
     }
 
     /**
@@ -125,6 +173,16 @@ class ResponseException extends ConsumerException
     public function getFlag()
     {
         return $this->flag;
+    }
+
+    /**
+     * Returns payload message
+     *
+     * @return Message
+     */
+    public function getPayload()
+    {
+        return $this->payload;
     }
 
     /**

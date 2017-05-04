@@ -11,9 +11,11 @@
 namespace Ecentria\Libraries\EcentriaAPIEventsBundle\Consumer;
 
 use Ecentria\Libraries\EcentriaAPIEventsBundle\Exception\ResponseException;
+use Ecentria\Libraries\EcentriaAPIEventsBundle\Model\Message;
 use Ecentria\Libraries\EcentriaAPIEventsBundle\Model\MessageInterface;
 use JMS\Serializer\SerializerInterface;
 use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
+use OldSound\RabbitMqBundle\RabbitMq\Producer;
 use PhpAmqpLib\Message\AMQPMessage;
 use  Ecentria\Libraries\EcentriaAPIEventsBundle\Services\MessageDispatcher;
 
@@ -50,22 +52,35 @@ class MessageConsumer implements ConsumerInterface
     private $serializer;
 
     /**
+     * Producer used to resend message to the end of the queue
+     *
+     * @var Producer
+     */
+    private $requeueAsNewProducer;
+
+    /**
      * Constructor
      *
-     * @param MessageDispatcher   $messageDispatcher
-     * @param SerializerInterface $serializer
+     * @param MessageDispatcher   $messageDispatcher  Message dispatcher
+     * @param SerializerInterface $serializer         Message serializer
+     * @param Producer            $resendProducer     Producer used to resend message to the end of the queue
      */
-    public function __construct(MessageDispatcher $messageDispatcher, SerializerInterface $serializer)
+    public function __construct(
+        MessageDispatcher $messageDispatcher,
+        SerializerInterface $serializer,
+        Producer $resendProducer
+    )
     {
         $this->messageDispatcher = $messageDispatcher;
         $this->serializer = $serializer;
+        $this->requeueAsNewProducer = $resendProducer;
     }
 
     /**
      * Execute
      * Returns: 0 - reject and requeue, 1 - remove from the queue
-     * 2 - nack and requeue, -1 - reject and drop 
-     * 
+     * 2 - nack and requeue, -1 - reject and drop
+     *
      *
      * @param AMQPMessage $msg The message
      * @throws \InvalidArgumentException
@@ -86,7 +101,23 @@ class MessageConsumer implements ConsumerInterface
             if ($e->stopConsuming()) {
                 $msg->delivery_info['channel']->basic_cancel($msg->delivery_info['consumer_tag']);
             }
-            return $e->getFlag();
+            $payload = $e->getPayload();
+            if (!$payload) {
+                $payload = $message;
+            }
+            switch ($e->getFlag()) {
+                case ResponseException::NACK_REQUEUE:
+                    return ConsumerInterface::MSG_SINGLE_NACK_REQUEUE;
+                case ResponseException::REJECT_REQUEUE:
+                    return ConsumerInterface::MSG_REJECT_REQUEUE;
+                case ResponseException::REJECT:
+                    return ConsumerInterface::MSG_REJECT;
+                case ResponseException::ACK_REQUEUE_AS_NEW:
+                    $this->resendMessage($payload);
+                    return ConsumerInterface::MSG_ACK;
+                default:
+                    return ConsumerInterface::MSG_ACK;
+            }
         }
         return true;
     }
@@ -101,5 +132,17 @@ class MessageConsumer implements ConsumerInterface
     public function setMessageClassName($messageClassName)
     {
         $this->messageClassName = $messageClassName;
+    }
+
+    /**
+     * Publish message, which effectively means resend message to the end of queue
+     *
+     * @param Message $payload the message
+     *
+     * @return void
+     */
+    private function resendMessage(Message $payload)
+    {
+        $this->requeueAsNewProducer->publish($this->serializer->serialize($payload, 'json'), $payload->getSource());
     }
 }

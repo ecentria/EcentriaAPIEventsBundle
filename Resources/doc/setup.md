@@ -39,8 +39,10 @@ public function registerBundles()
 C: Install Ecentria API Events Bundle
 -------------------------------------
 
-Specify serializer service in config.yml
+Specify in config.yml serializer service and rabbit mq producers to use when it is necessary to resend message to the end of the queue or to send it to quarantine
 ```
     ecentria_api_events:
         domain_message_serializer: jms_serializer
+        resend_producer: old_sound_rabbit_mq.resend_producer
+        quarantine_producer: old_sound_rabbit_mq.quarantine_producer
 ```
