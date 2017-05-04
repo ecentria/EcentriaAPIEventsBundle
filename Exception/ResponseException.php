@@ -45,14 +45,9 @@ class ResponseException extends ConsumerException
     const REJECT = 4;
 
     /**
-     * Flag for reject and resend message to the end of main queue
+     * Flag for ack and resend message to the end of main queue
      */
-    const REJECT_RESEND = 5;
-
-    /**
-     * Flag for reject and send message to a quarantine queue
-     */
-    const REJECT_QUARANTINE = 6;
+    const ACK_REQUEUE_AS_NEW = 5;
 
     /**
      * Response status flag
@@ -97,8 +92,7 @@ class ResponseException extends ConsumerException
                     self::NACK_REQUEUE,
                     self::REJECT_REQUEUE,
                     self::REJECT,
-                    self::REJECT_RESEND,
-                    self::REJECT_QUARANTINE
+                    self::ACK_REQUEUE_AS_NEW
                 ]
             )
         ) {
@@ -166,21 +160,9 @@ class ResponseException extends ConsumerException
      *
      * @return ResponseException
      */
-    public static function createRejectAndResend($stopConsuming = false, Message $message = null)
+    public static function createRejectAndRequeueAsNew($stopConsuming = false, Message $message = null)
     {
-        return new self(self::REJECT_RESEND, $stopConsuming, $message);
-    }
-
-    /**
-     * Creates exception with self::REJECT_QUARANTINE flag
-     *
-     * @param bool $stopConsuming Whether it is necessary to stop the consumer or not
-     *
-     * @return ResponseException
-     */
-    public static function createRejectAndQuarantine($stopConsuming = false, Message $message = null)
-    {
-        return new self(self::REJECT_QUARANTINE, $stopConsuming, $message);
+        return new self(self::ACK_REQUEUE_AS_NEW, $stopConsuming, $message);
     }
 
     /**

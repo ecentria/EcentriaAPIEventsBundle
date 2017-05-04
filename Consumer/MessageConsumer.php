@@ -56,14 +56,7 @@ class MessageConsumer implements ConsumerInterface
      *
      * @var Producer
      */
-    private $resendProducer;
-
-    /**
-     * Producer used to send message to quarantine queue
-     *
-     * @var Producer
-     */
-    private $quarantineProducer;
+    private $requeueAsNewProducer;
 
     /**
      * Constructor
@@ -71,19 +64,16 @@ class MessageConsumer implements ConsumerInterface
      * @param MessageDispatcher   $messageDispatcher  Message dispatcher
      * @param SerializerInterface $serializer         Message serializer
      * @param Producer            $resendProducer     Producer used to resend message to the end of the queue
-     * @param Producer            $quarantineProducer Producer used to send message to quarantine queue
      */
     public function __construct(
         MessageDispatcher $messageDispatcher,
         SerializerInterface $serializer,
-        Producer $resendProducer,
-        Producer $quarantineProducer
+        Producer $resendProducer
     )
     {
         $this->messageDispatcher = $messageDispatcher;
         $this->serializer = $serializer;
-        $this->resendProducer = $resendProducer;
-        $this->quarantineProducer = $quarantineProducer;
+        $this->requeueAsNewProducer = $resendProducer;
     }
 
     /**
@@ -122,11 +112,8 @@ class MessageConsumer implements ConsumerInterface
                     return ConsumerInterface::MSG_REJECT_REQUEUE;
                 case ResponseException::REJECT:
                     return ConsumerInterface::MSG_REJECT;
-                case ResponseException::REJECT_RESEND:
+                case ResponseException::ACK_REQUEUE_AS_NEW:
                     $this->resendMessage($payload);
-                    return ConsumerInterface::MSG_REJECT;
-                case ResponseException::REJECT_QUARANTINE:
-                    $this->quarantineMessage($payload);
                     return ConsumerInterface::MSG_REJECT;
                 default:
                     return ConsumerInterface::MSG_ACK;
@@ -147,13 +134,15 @@ class MessageConsumer implements ConsumerInterface
         $this->messageClassName = $messageClassName;
     }
 
+    /**
+     * Publish message, which effectively means resend message to the end of queue
+     *
+     * @param Message $payload the message
+     *
+     * @return void
+     */
     private function resendMessage(Message $payload)
     {
-        $this->resendProducer->publish($this->serializer->serialize($payload, 'json'), $payload->getSource());
-    }
-
-    private function quarantineMessage(Message $payload)
-    {
-        $this->quarantineProducer->publish($this->serializer->serialize($payload, 'json'), $payload->getSource());
+        $this->requeueAsNewProducer->publish($this->serializer->serialize($payload, 'json'), $payload->getSource());
     }
 }
