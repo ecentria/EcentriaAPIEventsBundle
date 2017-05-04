@@ -114,7 +114,7 @@ class MessageConsumer implements ConsumerInterface
                     return ConsumerInterface::MSG_REJECT;
                 case ResponseException::ACK_REQUEUE_AS_NEW:
                     $this->resendMessage($payload);
-                    return ConsumerInterface::MSG_REJECT;
+                    return ConsumerInterface::MSG_ACK;
                 default:
                     return ConsumerInterface::MSG_ACK;
             }

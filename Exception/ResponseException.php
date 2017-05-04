@@ -154,13 +154,13 @@ class ResponseException extends ConsumerException
     }
 
     /**
-     * Creates exception with self::REJECT_RESEND flag
+     * Creates exception with self::ACK_REQUEUE_AS_NEW flag
      *
      * @param bool $stopConsuming Whether it is necessary to stop the consumer or not
      *
      * @return ResponseException
      */
-    public static function createRejectAndRequeueAsNew($stopConsuming = false, Message $message = null)
+    public static function createAckAndRequeueAsNew($stopConsuming = false, Message $message = null)
     {
         return new self(self::ACK_REQUEUE_AS_NEW, $stopConsuming, $message);
     }
