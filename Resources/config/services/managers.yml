@@ -12,4 +12,4 @@ services:
     ecentria.api.domain_message_consumer.service:
         class: '%ecentria.api.domain_message_consumer.class%'
         arguments:
-            - '@ecentria.api.domain_message.manager°'
+            - '@ecentria.api.domain_message.manager'
