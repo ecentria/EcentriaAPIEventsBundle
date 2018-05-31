@@ -26,6 +26,8 @@ use Ecentria\Libraries\EcentriaAPIEventsBundle\Event\MessageEvent;
  */
 class MessageDispatcher
 {
+    const UNMATCHED_EVENT = 'ecentria_api_events_unmatched_event';
+
     /**
      * Domain event prefix
      *
@@ -71,9 +73,15 @@ class MessageDispatcher
      */
     public function dispatchMessage(MessageInterface $message)
     {
-        $event = $this->getMessageEventObject();
+        $event     = $this->getMessageEventObject();
+        $eventName = $this->getEventPrefix() . $message->getSource();
         $event->setMessage($message);
-        $this->dispatcher->dispatch($this->getEventPrefix() . $message->getSource(), $event);
+
+        if ($this->dispatcher->getListeners($eventName)) {
+            $this->dispatcher->dispatch($eventName, $event);
+        } else {
+            $this->dispatcher->dispatch(self::UNMATCHED_EVENT, $event);
+        }
     }
 
     /**
