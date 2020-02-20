@@ -5,11 +5,11 @@ parameters:
 
 services:
     ecentria.api.domain_message.manager:
-        class: %ecentria.api.domain_message.class%
+        class: "%ecentria.api.domain_message.class%"
         arguments:
             - '@event_dispatcher'
 
     ecentria.api.domain_message_consumer.service:
-        class: %ecentria.api.domain_message_consumer.class%
+        class: "%ecentria.api.domain_message_consumer.class%"
         arguments:
             - '@ecentria.api.domain_message.manager'
