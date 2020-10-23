@@ -81,7 +81,7 @@ class Message implements MessageInterface
      * Message value
      *
      * content of the message (null if delete, new value if update or create). this value is stored as a string and can be anything from an int to serialized data
-     * @var string|null
+     * @var string|null|array
      *
      * @Type("array")
      */
@@ -236,7 +236,7 @@ class Message implements MessageInterface
     }
 
     /**
-     * @return null|string
+     * @return null|string|array
      */
     public function getValue()
     {
@@ -244,7 +244,7 @@ class Message implements MessageInterface
     }
 
     /**
-     * @param null|string $value
+     * @param null|string|array $value
      */
     public function setValue($value)
     {
