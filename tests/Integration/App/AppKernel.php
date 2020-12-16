@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Ecentria\Libraries\EcentriaAPIEventsBundle\Tests\Integration\App;
 
 use Ecentria\Libraries\EcentriaAPIEventsBundle\EcentriaAPIEventsBundle;
+use Ecentria\Libraries\EcentriaAPIEventsBundle\Tests\Integration\App\Compiler\MakingJmsSerializerPublicPass;
 use JMS\SerializerBundle\JMSSerializerBundle;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
@@ -75,7 +76,7 @@ class AppKernel extends Kernel
             [
                 'secret' => 'secret',
                 'test' => true,
-                'translator' => false
+                'translator' => true
             ]
         );
 
@@ -98,6 +99,6 @@ class AppKernel extends Kernel
             ]
         );
 
-        $builder->setAlias('serializer', 'jms_serializer.serializer');
+        $builder->addCompilerPass(new MakingJmsSerializerPublicPass());
     }
 }

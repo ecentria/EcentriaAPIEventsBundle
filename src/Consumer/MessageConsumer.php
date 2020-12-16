@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /*
  * This file is part of the ecentria group, inc. software.
  *
@@ -15,7 +16,7 @@ use Ecentria\Libraries\EcentriaAPIEventsBundle\Model\MessageInterface;
 use JMS\Serializer\SerializerInterface;
 use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
 use PhpAmqpLib\Message\AMQPMessage;
-use  Ecentria\Libraries\EcentriaAPIEventsBundle\Services\MessageDispatcher;
+use Ecentria\Libraries\EcentriaAPIEventsBundle\Services\MessageDispatcher;
 
 /**
  * Message Consumer

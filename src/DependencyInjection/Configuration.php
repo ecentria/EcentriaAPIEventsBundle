@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /*
  * This file is part of the ecentria group, inc. software.
  *
@@ -26,7 +27,7 @@ class Configuration implements ConfigurationInterface
     /**
      * {@inheritDoc}
      * 
-     * @return \Symfony\Component\Config\Definition\Builder\TreeBuilder
+     * @return TreeBuilder
      */
     public function getConfigTreeBuilder()
     {
@@ -40,9 +41,7 @@ class Configuration implements ConfigurationInterface
             ->children()
                 ->scalarNode('domain_message_prefix')->defaultValue('domain.')->end()
                 ->scalarNode('domain_message_serializer')->cannotBeEmpty()->isRequired()->end()
-                ->scalarNode('domain_message_class_name')
-                    ->defaultValue(Message::class)
-                ->end()
+                ->scalarNode('domain_message_class_name')->defaultValue(Message::class)->end()
             ->end();
 
         return $treeBuilder;

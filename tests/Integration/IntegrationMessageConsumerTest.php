@@ -1,5 +1,13 @@
 <?php
 declare(strict_types=1);
+/*
+ * This file is part of the ecentria group, inc. software.
+ *
+ * (c) 2020, ecentria group, inc.
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 namespace Ecentria\Libraries\EcentriaAPIEventsBundle\Tests\Integration;
 
@@ -48,7 +56,7 @@ class IntegrationMessageConsumerTest extends KernelTestCase
         $messageDispatcher = self::getContainer()->get('ecentria.api.domain_message.manager');
         /** @var EventDispatcherInterface $eventDispatcher */
         $eventDispatcher = self::getContainer()->get('event_dispatcher');
-        $serializer = self::getContainer()->get('serializer');
+        $serializer = self::getContainer()->get('jms_serializer.serializer');
 
         $messageBody = '{"value": ["bar"], "source": "foo"}';
         $AMQPMessage = new AMQPMessage($messageBody);
@@ -77,7 +85,7 @@ class IntegrationMessageConsumerTest extends KernelTestCase
         $messageDispatcher = self::getContainer()->get('ecentria.api.domain_message.manager');
         /** @var EventDispatcherInterface $eventDispatcher */
         $eventDispatcher = self::getContainer()->get('event_dispatcher');
-        $serializer = self::getContainer()->get('serializer');
+        $serializer = self::getContainer()->get('jms_serializer.serializer');
 
         $messageBody = '{"value": ["bar"], "source": "foo"}';
         $AMQPMessage = new AMQPMessage($messageBody);

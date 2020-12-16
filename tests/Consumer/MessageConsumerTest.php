@@ -1,4 +1,12 @@
 <?php declare(strict_types=1);
+/*
+ * This file is part of the ecentria group, inc. software.
+ *
+ * (c) 2020, ecentria group, inc.
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 namespace Ecentria\Libraries\EcentriaAPIEventsBundle\Tests\Consumer;
 
@@ -31,6 +39,7 @@ class MessageConsumerTest extends TestCase
         $messageDispatcher = $this->createMock(MessageDispatcher::class);
         $serializer = $this->createMock(SerializerInterface::class);
         $AMQPMessage = $this->createMock(AMQPMessage::class);
+        $AMQPMessage->body = '';
         $AMQPChannel = $this->createMock(AMQPChannel::class);
         $responseException = $this->createMock(ResponseException::class);
 
@@ -58,6 +67,7 @@ class MessageConsumerTest extends TestCase
         $messageDispatcher = $this->createMock(MessageDispatcher::class);
         $serializer = $this->createMock(SerializerInterface::class);
         $AMQPMessage = $this->createMock(AMQPMessage::class);
+        $AMQPMessage->body = '';
         $responseException = $this->createMock(ResponseException::class);
 
         $target = new MessageConsumer($messageDispatcher, $serializer);
