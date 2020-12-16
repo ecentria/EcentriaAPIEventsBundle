@@ -6,12 +6,12 @@ Generic consumer and standard event message model meanth to pull in a domain eve
 Documentation
 -------------
 
-Documentation for Ecentria Rest Bundle is in [Resources/doc/index.md](Resources/doc/index.md)
+Documentation for Ecentria Rest Bundle is in [Resources/doc/index.md](src/Resources/doc/index.md)
 
 Installation
 ------------
 
-Installation instructions can be found in the [documentation](Resources/doc/setup.md)
+Installation instructions can be found in the [documentation](src/Resources/doc/setup.md)
 
 License
 -------

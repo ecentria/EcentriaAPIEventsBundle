@@ -1,0 +1,32 @@
+language: php
+sudo: false
+cache:
+  directories:
+    - $HOME/.composer/cache
+
+php: ~
+
+matrix:
+  fast_finish: true
+  include:
+    - php: 7.0
+      env: SYMFONY_VERSION=^3.4 JMS_SERIALIZER=^1.1
+    - php: 7.0
+      env: SYMFONY_VERSION=^3.4 JMS_SERIALIZER=^2.0
+    - php: 7.2
+      env: SYMFONY_VERSION=^3.4 JMS_SERIALIZER=^3.0
+    - php: 7.3
+      env: SYMFONY_VERSION=^4.4 JMS_SERIALIZER=^2.0
+    - php: 7.3
+      env: SYMFONY_VERSION=^4.4 JMS_SERIALIZER=^3.0
+
+
+before_script:
+  - phpenv config-rm xdebug.ini
+  - if [[ "$SYMFONY_VERSION" != "" ]]; then composer require --dev --no-update symfony/symfony=$SYMFONY_VERSION jms/serializer-bundle=$JMS_SERIALIZER; fi
+  - COMPOSER_MEMORY_LIMIT=-1 composer update ${COMPOSER_FLAGS} --no-interaction
+
+script:
+  - vendor/bin/phpunit --coverage-clover clover
+
+

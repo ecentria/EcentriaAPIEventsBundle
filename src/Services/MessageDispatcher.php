@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /*
  * This file is part of the ecentria group, inc. software.
  *
@@ -38,7 +39,7 @@ class MessageDispatcher
     /**
      * Symfony Event Dispatcher
      *
-     * @var \Symfony\Component\EventDispatcher\EventDispatcherInterface
+     * @var EventDispatcherInterface
      *
      */
     private $dispatcher;
@@ -46,7 +47,7 @@ class MessageDispatcher
     /**
      * Constructor
      *
-     * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $dispatcher
+     * @param EventDispatcherInterface $dispatcher
      *
      */
     public function __construct(EventDispatcherInterface $dispatcher)
@@ -60,7 +61,7 @@ class MessageDispatcher
      * @param string $eventPrefix Domain event prefix
      *
      */
-    public function setEventPrefix($eventPrefix)
+    public function setEventPrefix(string $eventPrefix)
     {
         $this->eventPrefix = $eventPrefix;
     }
@@ -87,10 +88,9 @@ class MessageDispatcher
     /**
      * returns the message object to use, overload to alter this. @todo setup interface for this
      *
-     * @return \Ecentria\Libraries\EcentriaAPIEventsBundle\Model\Message
-     *
+     * @return Message
      */
-    public function getMessageObject()
+    public function getMessageObject(): Message
     {
         return new Message();
     }
@@ -98,10 +98,9 @@ class MessageDispatcher
     /**
      * returns the message event object to use, overload to alter this. @todo setup interface for this
      *
-     * @return  \Ecentria\Libraries\EcentriaAPIEventsBundle\Event\MessageEvent
-     *
+     * @return  MessageEvent
      */
-    public function getMessageEventObject()
+    public function getMessageEventObject(): MessageEvent
     {
         return new MessageEvent();
     }
@@ -110,11 +109,10 @@ class MessageDispatcher
      * returns all the listeners in the app that are listening to domain messages
      *
      * @return array returns array of listener details (name and callback reference) by event key
-     *
      */
-    public function getInternalEventListeners() {
+    public function getInternalEventListeners(): array
+    {
         $all_listeners = $this->dispatcher->getListeners();
-
 
         $domain_listeners = array();
         $prefix = $this->getEventPrefix();
@@ -154,7 +152,7 @@ class MessageDispatcher
     /**
      * returns the injected dispatcher
      *
-     * @return \Symfony\Component\EventDispatcher\EventDispatcherInterface
+     * @return EventDispatcherInterface
      *
      */
     public function getDispatcher()

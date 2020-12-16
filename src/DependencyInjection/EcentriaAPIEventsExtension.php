@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /*
  * This file is part of the ecentria group, inc. software.
  *
@@ -20,8 +21,6 @@ use Symfony\Component\DependencyInjection\Loader;
  * This is the class that loads and manages your bundle configuration
  *
  * @author Justin Shanks <justin.shanks@opticsplanet.com>
- * 
- * To learn more see {@link http://symfony.com/doc/current/cookbook/bundles/extension.html}
  */
 class EcentriaAPIEventsExtension extends Extension
 {
@@ -39,11 +38,13 @@ class EcentriaAPIEventsExtension extends Extension
         $container->setParameter($this->getAlias() . '.domain_message_prefix', $config['domain_message_prefix']);
 
         $container->getDefinition('ecentria.api.domain_message.manager')
-            ->addMethodCall('setEventPrefix', [$config['domain_message_prefix']]);
+            ->addMethodCall('setEventPrefix', [$config['domain_message_prefix']])
+            ->setPublic(true);
 
         $container->getDefinition('ecentria.api.domain_message_consumer.service')
             ->addArgument(new Reference($config['domain_message_serializer']))
-            ->addMethodCall('setMessageClassName', [$config['domain_message_class_name']]);
+            ->addMethodCall('setMessageClassName', [$config['domain_message_class_name']])
+            ->setPublic(true);
     }
 
     /**
