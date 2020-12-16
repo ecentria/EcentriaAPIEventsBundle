@@ -12,6 +12,7 @@ namespace Ecentria\Libraries\EcentriaAPIEventsBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
+use Ecentria\Libraries\EcentriaAPIEventsBundle\Model\Message;
 
 /**
  * This is the class that validates and merges configuration from your app/config files
@@ -38,13 +39,11 @@ class Configuration implements ConfigurationInterface
         $rootNode
             ->children()
                 ->scalarNode('domain_message_prefix')->defaultValue('domain.')->end()
-                ->scalarNode('domain_message_serializer')->cannotBeEmpty()->end()
+                ->scalarNode('domain_message_serializer')->cannotBeEmpty()->isRequired()->end()
                 ->scalarNode('domain_message_class_name')
-                    ->defaultValue('Ecentria\Libraries\EcentriaAPIEventsBundle\Model\Message')
+                    ->defaultValue(Message::class)
                 ->end()
             ->end();
-
-
 
         return $treeBuilder;
     }

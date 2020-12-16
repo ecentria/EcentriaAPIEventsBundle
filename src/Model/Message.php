@@ -10,6 +10,7 @@
 
 namespace Ecentria\Libraries\EcentriaAPIEventsBundle\Model;
 
+use DateTime;
 use JMS\Serializer\Annotation\Type;
 
 /**
@@ -112,7 +113,8 @@ class Message implements MessageInterface
      * Message datetime
      *
      * the datetime that the message was generated
-     * @var datetime
+     *
+     * @var DateTime
      *
      * @Type("DateTime")
      */

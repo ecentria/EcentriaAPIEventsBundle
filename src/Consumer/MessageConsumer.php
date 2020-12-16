@@ -70,21 +70,21 @@ class MessageConsumer implements ConsumerInterface
      * @param AMQPMessage $msg The message
      * @throws \InvalidArgumentException
      *
-     * @return mixed Message status
+     * @return bool|int Message status
      */
     public function execute(AMQPMessage $msg)
     {
-        if (is_null($this->messageClassName)) {
+        if ($this->messageClassName === null) {
             throw new \InvalidArgumentException('You have to specify Domain class name');
         }
+
         /** @var MessageInterface $message */
         try {
-            $message = $this->serializer
-                ->deserialize($msg->body, $this->messageClassName, 'json');
+            $message = $this->serializer->deserialize($msg->body, $this->messageClassName, 'json');
             $this->messageDispatcher->dispatchMessage($message);
         } catch (ResponseException $e) {
-            if ($e->stopConsuming()) {
-                $msg->delivery_info['channel']->basic_cancel($msg->delivery_info['consumer_tag']);
+            if ($e->stopConsuming() && ($channel = $msg->getChannel())) {
+                $channel->basic_cancel($msg->getConsumerTag());
             }
             return $e->getFlag();
         }
@@ -98,7 +98,7 @@ class MessageConsumer implements ConsumerInterface
      *
      * @return void
      */
-    public function setMessageClassName($messageClassName)
+    public function setMessageClassName(string $messageClassName)
     {
         $this->messageClassName = $messageClassName;
     }
