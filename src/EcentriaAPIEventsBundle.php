@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /*
  * This file is part of the ecentria group, inc. software.
  *
@@ -20,5 +21,4 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
  */
 class EcentriaAPIEventsBundle extends Bundle
 {
-
 }

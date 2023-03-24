@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /*
  * This file is part of the ecentria group, inc. software.
  *
@@ -10,6 +11,7 @@
 
 namespace Ecentria\Libraries\EcentriaAPIEventsBundle\Model;
 
+use DateTime;
 use JMS\Serializer\Annotation\Type;
 
 /**
@@ -112,7 +114,8 @@ class Message implements MessageInterface
      * Message datetime
      *
      * the datetime that the message was generated
-     * @var datetime
+     *
+     * @var DateTime
      *
      * @Type("DateTime")
      */
